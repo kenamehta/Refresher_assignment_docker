@@ -1,0 +1,111 @@
+<!-- localStorage
+sessionStorage
+input types: text,email,password,submit
+input properties:patterns,autofocus,required,placeholder -->
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh"
+    crossorigin="anonymous">
+  <script>
+    function validatePassword() {
+      if (document.getElementById("pass1").value != (document.getElementById("pass2").value)) {
+        alert("Password doesn't match");
+      }
+      else {
+        //local storage
+        var names = localStorage.getItem('names');
+        names = names ? names.split(',') : [];
+        names.push(document.getElementById("name").value)
+        localStorage.setItem('names', names);
+      }
+    }
+    //session storage
+    function sessionUserAdd() {
+      if (document.getElementById("pass1").value == (document.getElementById("pass2").value)) {
+        sessionStorage.setItem('currentuser', document.getElementById("name").value);
+      }
+
+    }
+
+    //geolocation
+    function geoLoc() {
+      navigator.geolocation.getCurrentPosition(success)
+    }
+
+    function success(pos) {
+      var crd = pos.coords;
+      fetchData(crd.latitude, crd.longitude);
+    }
+
+    async function fetchData(lat, long) {
+      const data = await getLocation(lat, long);
+      document.getElementById('city').value = data.properties.relativeLocation.properties.city;
+      document.getElementById('state').value = data.properties.relativeLocation.properties.state;
+    }
+
+    async function getLocation(lat, long) {
+      var data = await fetch(`https://api.weather.gov/points/${lat},${long}`)
+      return data.json();
+    }
+  </script>
+</head>
+
+<body>
+  <div class="d-flex justify-content-center">
+    <h3>Enrol below for the Summer Camp html......!!</h3>
+  </div>
+  <div class="d-flex justify-content-center p3">
+    <form onsubmit="validatePassword();sessionUserAdd()">
+      <table align="center">
+        <tr>
+          <td>First name :</td>
+          <td><input type="text" id="name" placeholder="First name" required autofocus></td>
+        </tr>
+        <tr>
+          <td>Last name :</td>
+          <td><input type="text" placeholder="Last name"></td>
+        </tr>
+        <tr>
+          <td>Email-id :</td>
+          <td><input type="email" id="email" placeholder="E-mail" required></td>
+        </tr>
+        <tr>
+        <td>Password :</td>
+        <td><input type="password" id="pass1" placeholder="Password" pattern="(?=.*\d)(?=.*[^\w])(?=.*[A-Z]).{8,}" required></td>
+        </tr>
+        <tr>
+          <td>Re enter password :</td>
+          <td><input type="password" id="pass2" placeholder="Re-enter Password" required></td>
+        </tr>
+        <tr>
+          <td><button type="button" onclick="geoLoc()">Location :</button></td>
+          <td><input type="text" id="city" placeholder="City"></td>
+          <td><input type="text" id="state" placeholder="State"></td>
+        </tr>
+      </table>
+      <div>
+        <input type="submit">
+      </div>
+      <div>
+
+        <p> Enrolled students in Local Storage:
+          <script>
+            document.write(localStorage.getItem('names'))
+          </script>
+        </p>
+        <p> Latest enrolled student in Session Storage:
+          <script>
+            document.write(sessionStorage.getItem('currentuser'))
+          </script>
+        </p>
+        <p id="innerText"></p>
+      </div>
+    </form>
+  </div>
+</body>
+
+</html>
